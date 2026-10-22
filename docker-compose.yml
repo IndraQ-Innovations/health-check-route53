@@ -1,0 +1,36 @@
+services:
+  healthcheck:
+    build: .
+    container_name: healthcheck
+    restart: unless-stopped
+
+    environment:
+      PORT: "8877"
+
+    ports:
+      - "${HEALTHCHECK_BIND_IP}:8877:8877"
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('http').get('http://127.0.0.1:8877/health',r=>{process.exit(r.statusCode===200?0:1)}).on('error',()=>process.exit(1))"
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+    read_only: true
+
+    security_opt:
+      - no-new-privileges:true
+
+    cap_drop:
+      - ALL
+
+    pids_limit: 20
+    mem_limit: 32m
+    cpus: 0.10
