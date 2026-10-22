@@ -89,7 +89,7 @@ indraq-route53-healthcheck/
 ├── Dockerfile
 ├── docker-compose.yml
 ├── server.js
-├── indraq-route53-healthcheck-firewall.sh
+├── health-check.sh
 └── README.md
 ```
 
@@ -105,7 +105,7 @@ Runs the container on port `8877` with a read-only filesystem, no extra Linux ca
 ### `.env.example`
 Template for the server's private/LAN IP. The real `.env` is ignored by Git.
 
-### `indraq-route53-healthcheck-firewall.sh`
+### `health-check.sh`
 Installs and maintains the AWS Route 53 IP allowlist, Docker firewall chain, saved config, systemd service and automatic refresh timer.
 
 ---
@@ -305,8 +305,8 @@ Do not create a UDP rule; Route 53's HTTP health check uses TCP.
 # Step 6 — run the firewall installer
 
 ```bash
-chmod +x indraq-route53-healthcheck-firewall.sh
-sudo ./indraq-route53-healthcheck-firewall.sh
+chmod +x health-check.sh
+sudo ./health-check.sh
 ```
 
 The installer checks/installs the helper tools it needs, verifies Docker and the healthcheck container, downloads AWS Route 53 IP ranges, creates firewall rules and installs persistence.
@@ -501,7 +501,7 @@ Exit with `Ctrl+C`.
 ## Install/update
 
 ```bash
-sudo ./indraq-route53-healthcheck-firewall.sh
+sudo ./health-check.sh
 ```
 
 First run = interactive wizard.
@@ -511,7 +511,7 @@ If saved config exists, it reuses it.
 ## Apply saved config
 
 ```bash
-sudo ./indraq-route53-healthcheck-firewall.sh --apply
+sudo ./health-check.sh --apply
 ```
 
 Loads `/etc/indraq/route53-healthcheck.conf`, refreshes AWS ranges and rebuilds the firewall rules.
@@ -519,7 +519,7 @@ Loads `/etc/indraq/route53-healthcheck.conf`, refreshes AWS ranges and rebuilds 
 ## Uninstall
 
 ```bash
-sudo ./indraq-route53-healthcheck-firewall.sh --uninstall
+sudo ./health-check.sh --uninstall
 ```
 
 Removes this project's Route 53 firewall chain, ipset, systemd service/timer, saved config and installed script copy.
@@ -529,7 +529,7 @@ It leaves Docker, the healthcheck container and your existing Docker hardening u
 ## Reset
 
 ```bash
-sudo ./indraq-route53-healthcheck-firewall.sh --reset
+sudo ./health-check.sh --reset
 ```
 
 Removes this Route 53 setup and immediately starts a fresh interactive installation.
@@ -537,13 +537,13 @@ Removes this Route 53 setup and immediately starts a fresh interactive installat
 ## Help
 
 ```bash
-./indraq-route53-healthcheck-firewall.sh --help
+./health-check.sh --help
 ```
 
 ## Version
 
 ```bash
-./indraq-route53-healthcheck-firewall.sh --version
+./health-check.sh --version
 ```
 
 Expected:
@@ -571,7 +571,7 @@ TEST_SOURCE_CIDRS="223.181.16.84/32"
 Then apply:
 
 ```bash
-sudo ./indraq-route53-healthcheck-firewall.sh --apply
+sudo ./health-check.sh --apply
 ```
 
 or:
@@ -699,7 +699,7 @@ docker compose up -d --build --force-recreate
 Update/reinstall the firewall script copy:
 
 ```bash
-sudo ./indraq-route53-healthcheck-firewall.sh
+sudo ./health-check.sh
 ```
 
 ---
